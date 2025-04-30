@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Sample.MauiApp1.Models;
+using System.Text.Json;
 
 namespace Sample.MauiApp1.Data
 {
@@ -31,7 +31,7 @@ namespace Sample.MauiApp1.Data
             ProjectsJson? payload = null;
             try
             {
-                payload = JsonSerializer.Deserialize(templateStream, JsonContext.Default.ProjectsJson);
+                payload = await JsonSerializer.DeserializeAsync(templateStream, JsonContext.Default.ProjectsJson);
             }
             catch (Exception e)
             {

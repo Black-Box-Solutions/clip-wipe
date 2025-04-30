@@ -38,11 +38,11 @@ namespace Sample.MauiApp1.PageModels
         private IconData _icon;
 
         [ObservableProperty]
-        bool _isBusy;
+        private bool _isBusy;
 
         [ObservableProperty]
-        private List<IconData> _icons = new List<IconData>
-        {
+        private List<IconData> _icons =
+        [
             new IconData { Icon = FluentUI.ribbon_24_regular, Description = "Ribbon Icon" },
             new IconData { Icon = FluentUI.ribbon_star_24_regular, Description = "Ribbon Star Icon" },
             new IconData { Icon = FluentUI.trophy_24_regular, Description = "Trophy Icon" },
@@ -50,10 +50,9 @@ namespace Sample.MauiApp1.PageModels
             new IconData { Icon = FluentUI.book_24_regular, Description = "Book Icon" },
             new IconData { Icon = FluentUI.people_24_regular, Description = "People Icon" },
             new IconData { Icon = FluentUI.bot_24_regular, Description = "Bot Icon" }
-        };
+        ];
 
-        public bool HasCompletedTasks
-            => _project?.Tasks.Any(t => t.IsCompleted) ?? false;
+        public bool HasCompletedTasks => _project?.Tasks.Any(t => t.IsCompleted) ?? false;
 
         public ProjectDetailPageModel(ProjectRepository projectRepository, TaskRepository taskRepository, CategoryRepository categoryRepository, TagRepository tagRepository, ModalErrorHandler errorHandler)
         {
@@ -62,15 +61,16 @@ namespace Sample.MauiApp1.PageModels
             _categoryRepository = categoryRepository;
             _tagRepository = tagRepository;
             _errorHandler = errorHandler;
-            _icon = _icons.First();
+            _icon = _icons[0];
             Tasks = [];
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            if (query.ContainsKey("id"))
+            ArgumentNullException.ThrowIfNull(query);
+            if (query.TryGetValue("id", out var value))
             {
-                int id = Convert.ToInt32(query["id"]);
+                int id = Convert.ToInt32(value);
                 LoadData(id).FireAndForgetSafeAsync(_errorHandler);
             }
             else if (query.ContainsKey("refresh"))
@@ -80,9 +80,11 @@ namespace Sample.MauiApp1.PageModels
             else
             {
                 Task.WhenAll(LoadCategories(), LoadTags()).FireAndForgetSafeAsync(_errorHandler);
-                _project = new();
-                _project.Tags = [];
-                _project.Tasks = [];
+                _project = new Project
+                {
+                    Tags = [],
+                    Tasks = []
+                };
                 Tasks = _project.Tasks;
             }
         }
@@ -98,7 +100,9 @@ namespace Sample.MauiApp1.PageModels
             if (_project.IsNullOrNew())
             {
                 if (_project is not null)
-                    Tasks = new(_project.Tasks);
+                {
+                    Tasks = new List<ProjectTask>(_project.Tasks);
+                }
 
                 return;
             }
@@ -136,7 +140,7 @@ namespace Sample.MauiApp1.PageModels
                 {
                     tag.IsSelected = _project.Tags.Any(t => t.ID == tag.ID);
                 }
-                AllTags = new(allTags);
+                AllTags = new List<Tag>(allTags);
             }
             catch (Exception e)
             {
@@ -155,7 +159,6 @@ namespace Sample.MauiApp1.PageModels
             await _taskRepository.SaveItemAsync(task);
             OnPropertyChanged(nameof(HasCompletedTasks));
         }
-
 
         [RelayCommand]
         private async Task Save()
@@ -211,7 +214,7 @@ namespace Sample.MauiApp1.PageModels
 
             // Pass the project so if this is a new project we can just add
             // the tasks to the project and then save them all from here.
-            await Shell.Current.GoToAsync($"task",
+            await Shell.Current.GoToAsync("task",
                 new ShellNavigationQueryParameters(){
                     {TaskDetailPageModel.ProjectQueryKey, _project}
                 });
@@ -252,7 +255,7 @@ namespace Sample.MauiApp1.PageModels
                 }
             }
 
-            AllTags = new(AllTags);
+            AllTags = new List<Tag>(AllTags);
         }
 
         [RelayCommand]
@@ -265,7 +268,7 @@ namespace Sample.MauiApp1.PageModels
                 Tasks.Remove(task);
             }
 
-            Tasks = new(Tasks);
+            Tasks = new List<ProjectTask>(Tasks);
             OnPropertyChanged(nameof(HasCompletedTasks));
             await AppShell.DisplayToastAsync("All cleaned up!");
         }

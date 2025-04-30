@@ -1,9 +1,7 @@
 #nullable disable
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Sample.MauiApp1.Data;
 using Sample.MauiApp1.Models;
-using Sample.MauiApp1.Services;
 
 namespace Sample.MauiApp1.PageModels
 {
@@ -26,13 +24,13 @@ namespace Sample.MauiApp1.PageModels
         }
 
         [RelayCommand]
-        Task NavigateToProject(Project project)
+        private Task NavigateToProject(Project project)
             => Shell.Current.GoToAsync($"project?id={project.ID}");
 
         [RelayCommand]
-        async Task AddProject()
+        private async Task AddProject()
         {
-            await Shell.Current.GoToAsync($"project");
+            await Shell.Current.GoToAsync("project");
         }
     }
 }

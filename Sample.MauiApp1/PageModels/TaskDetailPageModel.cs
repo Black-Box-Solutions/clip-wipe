@@ -1,8 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Sample.MauiApp1.Data;
 using Sample.MauiApp1.Models;
-using Sample.MauiApp1.Services;
 
 namespace Sample.MauiApp1.PageModels
 {
@@ -30,7 +28,6 @@ namespace Sample.MauiApp1.PageModels
         [ObservableProperty]
         private int _selectedProjectIndex = -1;
 
-
         [ObservableProperty]
         private bool _isExistingProject;
 
@@ -49,13 +46,15 @@ namespace Sample.MauiApp1.PageModels
         private async Task LoadTaskAsync(IDictionary<string, object> query)
         {
             if (query.TryGetValue(ProjectQueryKey, out var project))
+            {
                 Project = (Project)project;
+            }
 
             int taskId = 0;
 
-            if (query.ContainsKey("id"))
+            if (query.TryGetValue("id", out object? value))
             {
-                taskId = Convert.ToInt32(query["id"]);
+                taskId = Convert.ToInt32(value);
                 _task = await _taskRepository.GetAsync(taskId);
 
                 if (_task is null)
@@ -83,9 +82,13 @@ namespace Sample.MauiApp1.PageModels
             }
 
             if (Project is not null)
+            {
                 SelectedProjectIndex = Projects.FindIndex(p => p.ID == Project.ID);
+            }
             else if (_task?.ProjectID > 0)
+            {
                 SelectedProjectIndex = Projects.FindIndex(p => p.ID == _task.ProjectID);
+            }
 
             if (taskId > 0)
             {
@@ -134,20 +137,28 @@ namespace Sample.MauiApp1.PageModels
             int projectId = Project?.ID ?? 0;
 
             if (Projects.Count > SelectedProjectIndex && SelectedProjectIndex >= 0)
+            {
                 _task.ProjectID = projectId = Projects[SelectedProjectIndex].ID;
+            }
 
             _task.IsCompleted = IsCompleted;
 
             if (Project?.ID == projectId && !Project.Tasks.Contains(_task))
+            {
                 Project.Tasks.Add(_task);
+            }
 
             if (_task.ProjectID > 0)
+            {
                 _taskRepository.SaveItemAsync(_task).FireAndForgetSafeAsync(_errorHandler);
+            }
 
             await Shell.Current.GoToAsync("..?refresh=true");
 
             if (_task.ID > 0)
+            {
                 await AppShell.DisplayToastAsync("Task saved");
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanDelete))]
@@ -161,11 +172,12 @@ namespace Sample.MauiApp1.PageModels
                 return;
             }
 
-            if (Project.Tasks.Contains(_task))
-                Project.Tasks.Remove(_task);
+            Project.Tasks.Remove(_task);
 
             if (_task.ID > 0)
+            {
                 await _taskRepository.DeleteItemAsync(_task);
+            }
 
             await Shell.Current.GoToAsync("..?refresh=true");
             await AppShell.DisplayToastAsync("Task deleted");

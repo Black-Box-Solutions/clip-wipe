@@ -27,16 +27,15 @@ namespace Sample.MauiApp1.PageModels
         private List<Project> _projects = [];
 
         [ObservableProperty]
-        bool _isBusy;
+        private bool _isBusy;
 
         [ObservableProperty]
-        bool _isRefreshing;
+        private bool _isRefreshing;
 
         [ObservableProperty]
         private string _today = DateTime.Now.ToString("dddd, MMM d");
 
-        public bool HasCompletedTasks
-            => Tasks?.Any(t => t.IsCompleted) ?? false;
+        public bool HasCompletedTasks => Tasks?.Any(t => t.IsCompleted) ?? false;
 
         public MainPageModel(SeedDataService seedDataService, ProjectRepository projectRepository,
             TaskRepository taskRepository, CategoryRepository categoryRepository, ModalErrorHandler errorHandler)
@@ -65,9 +64,9 @@ namespace Sample.MauiApp1.PageModels
                     chartColors.Add(category.ColorBrush);
 
                     var ps = Projects.Where(p => p.CategoryID == category.ID).ToList();
-                    int tasksCount = ps.SelectMany(p => p.Tasks).Count();
+                    int tasksCount = ps.Sum(p => p.Tasks.Count);
 
-                    chartData.Add(new(category.Title, tasksCount));
+                    chartData.Add(new CategoryChartData(category.Title, tasksCount));
                 }
 
                 TodoCategoryData = chartData;
@@ -114,12 +113,10 @@ namespace Sample.MauiApp1.PageModels
         }
 
         [RelayCommand]
-        private void NavigatedTo() =>
-            _isNavigatedTo = true;
+        private void NavigatedTo() => _isNavigatedTo = true;
 
         [RelayCommand]
-        private void NavigatedFrom() =>
-            _isNavigatedTo = false;
+        private void NavigatedFrom() => _isNavigatedTo = false;
 
         [RelayCommand]
         private async Task Appearing()
@@ -138,15 +135,14 @@ namespace Sample.MauiApp1.PageModels
         }
 
         [RelayCommand]
-        private Task TaskCompleted(ProjectTask task)
+        private async Task<int> TaskCompleted(ProjectTask task)
         {
             OnPropertyChanged(nameof(HasCompletedTasks));
-            return _taskRepository.SaveItemAsync(task);
+            return await _taskRepository.SaveItemAsync(task);
         }
 
         [RelayCommand]
-        private Task AddTask()
-            => Shell.Current.GoToAsync($"task");
+        private Task AddTask() => Shell.Current.GoToAsync("task");
 
         [RelayCommand]
         private Task NavigateToProject(Project project)
@@ -167,7 +163,7 @@ namespace Sample.MauiApp1.PageModels
             }
 
             OnPropertyChanged(nameof(HasCompletedTasks));
-            Tasks = new(Tasks);
+            Tasks = new List<ProjectTask>(Tasks);
             await AppShell.DisplayToastAsync("All cleaned up!");
         }
     }

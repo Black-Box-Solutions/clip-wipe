@@ -27,10 +27,14 @@ namespace Sample.MauiApp1.Pages.Controls
             var checkbox = (CheckBox)sender;
 
             if (checkbox.BindingContext is not ProjectTask task)
+            {
                 return;
+            }
 
             if (task.IsCompleted == e.Value)
+            {
                 return;
+            }
 
             task.IsCompleted = e.Value;
             TaskCompletedCommand?.Execute(task);

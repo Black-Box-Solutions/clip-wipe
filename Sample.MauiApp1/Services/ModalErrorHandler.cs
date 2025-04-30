@@ -5,7 +5,7 @@ namespace Sample.MauiApp1.Services
     /// </summary>
     public class ModalErrorHandler : IErrorHandler
     {
-        SemaphoreSlim _semaphore = new(1, 1);
+        private readonly SemaphoreSlim _semaphore = new(1, 1);
 
         /// <summary>
         /// Handle error in UI.
@@ -16,13 +16,15 @@ namespace Sample.MauiApp1.Services
             DisplayAlert(ex).FireAndForgetSafeAsync();
         }
 
-        async Task DisplayAlert(Exception ex)
+        private async Task DisplayAlert(Exception ex)
         {
             try
             {
                 await _semaphore.WaitAsync();
                 if (Shell.Current is Shell shell)
+                {
                     await shell.DisplayAlert("Error", ex.Message, "OK");
+                }
             }
             finally
             {
