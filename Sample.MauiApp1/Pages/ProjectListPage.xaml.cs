@@ -1,11 +1,10 @@
-namespace Sample.MauiApp1.Pages
+namespace Sample.MauiApp1.Pages;
+
+public partial class ProjectListPage : ContentPage
 {
-    public partial class ProjectListPage : ContentPage
+    public ProjectListPage(ProjectListPageModel model)
     {
-        public ProjectListPage(ProjectListPageModel model)
-        {
-            BindingContext = model;
-            InitializeComponent();
-        }
+        BindingContext = model;
+        InitializeComponent();
     }
 }

@@ -1,10 +1,9 @@
-namespace Sample.MauiApp1.Pages.Controls
+namespace Sample.MauiApp1.Pages.Controls;
+
+public partial class TagView
 {
-    public partial class TagView
+    public TagView()
     {
-        public TagView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

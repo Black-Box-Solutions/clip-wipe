@@ -1,11 +1,10 @@
-namespace Sample.MauiApp1.Pages
+namespace Sample.MauiApp1.Pages;
+
+public partial class ManageMetaPage : ContentPage
 {
-    public partial class ManageMetaPage : ContentPage
+    public ManageMetaPage(ManageMetaPageModel model)
     {
-        public ManageMetaPage(ManageMetaPageModel model)
-        {
-            InitializeComponent();
-            BindingContext = model;
-        }
+        InitializeComponent();
+        BindingContext = model;
     }
 }

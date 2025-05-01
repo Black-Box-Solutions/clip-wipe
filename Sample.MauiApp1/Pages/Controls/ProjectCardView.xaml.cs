@@ -1,10 +1,9 @@
-namespace Sample.MauiApp1.Pages.Controls
+namespace Sample.MauiApp1.Pages.Controls;
+
+public partial class ProjectCardView
 {
-    public partial class ProjectCardView
+    public ProjectCardView()
     {
-        public ProjectCardView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

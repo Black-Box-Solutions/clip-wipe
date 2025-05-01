@@ -1,14 +1,13 @@
 using System.Text.Json.Serialization;
 
-namespace Sample.MauiApp1.Models
-{
-    public class ProjectTask
-    {
-        public int ID { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public bool IsCompleted { get; set; }
+namespace Sample.MauiApp1.Models;
 
-        [JsonIgnore]
-        public int ProjectID { get; set; }
-    }
+public class ProjectTask
+{
+    public int ID { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public bool IsCompleted { get; set; }
+
+    [JsonIgnore]
+    public int ProjectID { get; set; }
 }

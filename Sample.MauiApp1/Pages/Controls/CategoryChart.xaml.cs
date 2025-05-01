@@ -1,10 +1,9 @@
-namespace Sample.MauiApp1.Pages.Controls
+namespace Sample.MauiApp1.Pages.Controls;
+
+public partial class CategoryChart
 {
-    public partial class CategoryChart
+    public CategoryChart()
     {
-        public CategoryChart()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

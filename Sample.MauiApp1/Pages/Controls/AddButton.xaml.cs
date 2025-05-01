@@ -1,10 +1,9 @@
-namespace Sample.MauiApp1.Pages.Controls
+namespace Sample.MauiApp1.Pages.Controls;
+
+public partial class AddButton
 {
-    public partial class AddButton
+    public AddButton()
     {
-        public AddButton()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
