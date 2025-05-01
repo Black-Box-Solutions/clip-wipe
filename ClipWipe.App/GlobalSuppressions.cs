@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0130:Namespace does not match folder structure", Justification = "<Pending>", Scope = "namespace", Target = "~N:ClipWipe.App")]
+[assembly: SuppressMessage("Performance", "HAA0502:Explicit new reference type allocation", Justification = "<Pending>")]
