@@ -1,4 +1,5 @@
-﻿using ClipWipe.App.Services;
+﻿using ClipWipe.App.Extensions;
+using ClipWipe.App.Services;
 
 namespace ClipWipe.App;
 
@@ -23,7 +24,7 @@ public partial class App : Application
         base.OnStart();
 
         // Start timer service when app starts
-        _clipboardTimerService.InitializeTimerFromSettings();
+        _clipboardTimerService.InitializeTimerFromSettingsAsync().SafeFireAndForget();
     }
 
     protected override void OnSleep()
@@ -31,6 +32,6 @@ public partial class App : Application
         base.OnSleep();
 
         // App going to background
-        _clipboardTimerService.SaveSettings();
+        _clipboardTimerService.SaveSettingsAsync().SafeFireAndForget();
     }
 }

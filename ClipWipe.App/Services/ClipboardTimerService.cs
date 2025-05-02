@@ -1,5 +1,4 @@
 ﻿namespace ClipWipe.App.Services;
-
 public class ClipboardTimerService
 {
     private readonly IClipboardService _clipboardService;
@@ -12,7 +11,7 @@ public class ClipboardTimerService
         _settingsService = settingsService;
     }
 
-    public void InitializeTimerFromSettings()
+    public async Task InitializeTimerFromSettingsAsync()
     {
         // Stop existing timer if it's running
         StopTimer();
@@ -20,22 +19,30 @@ public class ClipboardTimerService
         // If auto-clear is enabled, start the timer
         if (_settingsService.AutoClearEnabled)
         {
-            StartTimer(_settingsService.AutoClearIntervalMinutes);
+            await StartTimerAsync(_settingsService.AutoClearIntervalMinutes);
         }
     }
 
-    public void StartTimer(int intervalMinutes)
+    public async Task StartTimerAsync(int intervalMinutes)
     {
-        StopTimer();
-
-        _timer = Application.Current.Dispatcher.CreateTimer();
-        _timer.Interval = TimeSpan.FromMinutes(intervalMinutes);
-        _timer.Tick += (s, e) =>
+        try
         {
-            _clipboardService.ClearClipboard();
-            _settingsService.LastClearTime = DateTime.Now;
-        };
-        _timer.Start();
+            StopTimer();
+
+            _timer = Application.Current.Dispatcher.CreateTimer();
+            _timer.Interval = TimeSpan.FromMinutes(intervalMinutes);
+            _timer.Tick += async (s, e) =>
+            {
+                await _clipboardService.ClearClipboardAsync();
+                _settingsService.LastClearTime = DateTime.Now;
+            };
+
+            _timer.Start();
+        }
+        catch (Exception ex)
+        {
+            //TODO Log the exception and handle it appropriately
+        }
     }
 
     public void StopTimer()
