@@ -17,7 +17,7 @@ public class SettingsService : ISettingsService
     public SettingsService()
     {
         //TODO LoadSettingsAsync().ConfigureAwait(false);
-        LoadSettingsAsync().FireAndForgetSafeAsync();
+        LoadSettingsAsync().SafeFireAndForget();
     }
 
     public bool AutoClearEnabled

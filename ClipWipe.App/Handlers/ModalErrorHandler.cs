@@ -15,7 +15,7 @@ public class ModalErrorHandler : IErrorHandler
     /// <param name="ex">Exception.</param>
     public void HandleError(Exception ex)
     {
-        DisplayAlert(ex).FireAndForgetSafeAsync();
+        DisplayAlert(ex).SafeFireAndForget();
     }
 
     private async Task DisplayAlert(Exception ex)
