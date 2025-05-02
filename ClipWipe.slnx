@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".editorconfig.TODO" />
+    <File Path=".gitignore" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="ClipWipe.App/ClipWipe.App.csproj" Id="ed7704c8-0540-4629-87c6-61b3d3c53563">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="Sample.MauiApp1/Sample.MauiApp1.csproj" Id="c45fac69-f8b4-4033-9828-bcc9eb7d5c14">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>
