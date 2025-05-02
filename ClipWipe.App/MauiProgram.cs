@@ -1,10 +1,11 @@
-﻿using ClipWipe.App.Services;
+﻿using ClipWipe.App.PageModels;
+using ClipWipe.App.Pages;
+using ClipWipe.App.Services;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace ClipWipe.App;
-
 //public static class MauiProgram
 //{
 //    public static MauiApp CreateMauiApp()
@@ -48,11 +49,11 @@ public static class MauiProgram
         builder.Services.AddSingleton<ISettingsService, SettingsService>();
         builder.Services.AddSingleton<ClipboardTimerService>();
 
-        // Register ViewModels
+        // Register PageModels
         builder.Services.AddTransient<MainPageViewModel>();
         builder.Services.AddTransient<SettingsPageViewModel>();
 
-        // Register Views
+        // Register Pages
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<SettingsPage>();
 

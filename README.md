@@ -7,9 +7,10 @@ manually or at a specified interval.
   - [Features](#features)
   - [Requirements](#requirements)
   - [Implementation Details](#implementation-details)
-  - [Samsung OneUI Compatibility](#samsung-oneui-compatibility)
-  - [License](#license)
-  - [File Structure](#file-structure)
+  - [d access alerts, this applicat](#d-access-alerts-this-applicat)
+  - [nager.cspr](#nager.cspr)
+  - [s
+├── MauiProgra](#s-mauiprogra)
 <!--/TOC-->
 
 ## Features
@@ -30,8 +31,8 @@ manually or at a specified interval.
 
 The application is structured using the MVVM(Model-View-ViewModel) pattern:
 
-- ** Views**: UI components(MainPage, SettingsPage)
-- ** ViewModels**: Business logic and UI state(MainPageViewModel, SettingsPageViewModel)
+- ** Pages**: UI components(MainPage, SettingsPage)
+- ** PageModels**: Business logic and UI state(MainPageViewModel, SettingsPageViewModel)
 - ** Services**: Core functionality(ClipboardService, SettingsService, ClipboardTimerService)
 
 The application uses platform-specific code to interact with the Android clipboard API, and implements proper async patterns throughout the codebase.
@@ -64,11 +65,11 @@ ClipboardManager/
 │   ├── ISettingsService.cs
 │   ├── SettingsService.cs
 │   └── ClipboardTimerService.cs
-├── ViewModels/
+├── PageModels/
 │   ├── BaseViewModel.cs
 │   ├── MainPageViewModel.cs
 │   └── SettingsPageViewModel.cs
-├── Views/
+├── Pages/
 │   ├── MainPage.xaml
 │   ├── MainPage.xaml.cs
 │   ├── SettingsPage.xaml
