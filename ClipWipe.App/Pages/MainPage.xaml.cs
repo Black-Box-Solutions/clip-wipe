@@ -1,6 +1,6 @@
-﻿namespace ClipWipe.App.Pages;
+﻿using ClipWipe.App.PageModels;
 
-using ClipWipe.App.PageModels;
+namespace ClipWipe.App.Pages;
 
 public partial class MainPage : ContentPage
 {
@@ -16,6 +16,10 @@ public partial class MainPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        _viewModel.RefreshClipboardCommand.Execute(null);
+
+        if (_viewModel.RefreshClipboardCommand.CanExecute(null))
+        {
+            _viewModel.RefreshClipboardCommand.Execute(null);
+        }
     }
 }
