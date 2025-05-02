@@ -12,10 +12,9 @@ public class BootReceiver : BroadcastReceiver
         if (intent.Action == Intent.ActionBootCompleted)
         {
             // Check if start on boot is enabled in settings
-            var preferences = context.GetSharedPreferences("ClipWipe.App.Settings", FileCreationMode.Private);
-            bool startOnBootEnabled = preferences.GetBoolean("start_on_boot_enabled", false);
-
-            if (startOnBootEnabled)
+            ISharedPreferences? preferences = context.GetSharedPreferences("ClipWipe.App.Settings", FileCreationMode.Private);
+            bool? startOnBootEnabled = preferences?.GetBoolean("start_on_boot_enabled", false);
+            if (startOnBootEnabled == true)
             {
                 var startIntent = new Intent(context, typeof(MainActivity));
                 startIntent.AddFlags(ActivityFlags.NewTask);

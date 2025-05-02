@@ -2,6 +2,9 @@
 
 namespace ClipWipe.App.Services;
 
+// ---------------------------------------
+// PLATFORM-SPECIFIC CODE (iOS)
+// ---------------------------------------
 public partial class ClipboardService : IClipboardService
 {
     public async Task<string> GetClipboardContentAsync()

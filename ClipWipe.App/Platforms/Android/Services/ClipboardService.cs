@@ -2,10 +2,8 @@
 
 namespace ClipWipe.App.Services;
 
-using ClipboardManager = Android.Content.ClipboardManager;
-
 // ---------------------------------------
-// 5. PLATFORM-SPECIFIC CODE (ANDROID)
+// PLATFORM-SPECIFIC CODE (ANDROID)
 // ---------------------------------------
 public partial class ClipboardService : IClipboardService
 {
@@ -15,7 +13,8 @@ public partial class ClipboardService : IClipboardService
     {
         return await Task.Run(() =>
         {
-            if (_context.GetSystemService(Context.ClipboardService) is ClipboardManager { HasPrimaryClip: true } clipboardManager)
+            if (_context.GetSystemService(Context.ClipboardService) is
+                Android.Content.ClipboardManager { HasPrimaryClip: true } clipboardManager)
             {
                 ClipData? clipData = clipboardManager.PrimaryClip;
                 if (clipData?.ItemCount > 0)
@@ -32,7 +31,7 @@ public partial class ClipboardService : IClipboardService
     {
         await Task.Run(() =>
         {
-            if (_context.GetSystemService(Context.ClipboardService) is ClipboardManager clipboardManager)
+            if (_context.GetSystemService(Context.ClipboardService) is Android.Content.ClipboardManager clipboardManager)
             {
                 //TODO : Check if this is the correct way to clear the clipboard
                 //TODO should this use ClipboardManager.ClearPrimaryClip?
@@ -46,7 +45,8 @@ public partial class ClipboardService : IClipboardService
     {
         return await Task.Run(() =>
         {
-            if (_context.GetSystemService(Context.ClipboardService) is ClipboardManager { HasPrimaryClip: true } clipboardManager)
+            if (_context.GetSystemService(Context.ClipboardService) is
+                Android.Content.ClipboardManager { HasPrimaryClip: true } clipboardManager)
             {
                 ClipData? clipData = clipboardManager.PrimaryClip;
                 if (clipData?.ItemCount > 0)
