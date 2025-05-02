@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"  
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"  
+           xmlns:pageModels="clr-namespace:ClipWipe.App.PageModels"  
+           x:Class="ClipWipe.App.Pages.SettingsPage"  
+           x:DataType="pageModels:SettingsPageViewModel"  
+           Title="Settings">  
+
+  <ScrollView>  
+      <VerticalStackLayout Padding="25" Spacing="20">  
+          <Label Text="Clipboard Manager Settings" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />  
+
+          <Border Stroke="LightGray" Padding="15" StrokeShape="RoundRectangle 10">  
+              <VerticalStackLayout Spacing="15">  
+                  <Label Text="Auto-Clear Settings" FontSize="16" FontAttributes="Bold" />  
+
+                  <HorizontalStackLayout Spacing="10">  
+                      <CheckBox IsChecked="{Binding AutoClearEnabled}" />  
+                      <Label Text="Enable Auto-Clear Clipboard" VerticalOptions="Center" />  
+                  </HorizontalStackLayout>  
+
+                  <VerticalStackLayout IsVisible="{Binding AutoClearEnabled}">  
+                      <Label Text="Clear Interval (in minutes):" Margin="0,0,0,5" />  
+                      <Grid ColumnDefinitions="*,Auto" HorizontalOptions="Fill">  
+                          <Slider Grid.Column="0" Value="{Binding AutoClearIntervalMinutes}"  
+                                  Minimum="1"  
+                                  Maximum="120"  
+                                  MinimumTrackColor="#3498db"  
+                                  MaximumTrackColor="LightGray"  
+                                  ThumbColor="#3498db" />  
+                          <Label Grid.Column="1" Text="{Binding AutoClearIntervalMinutes, StringFormat='{0} min'}"  
+                                 VerticalOptions="Center"  
+                                 WidthRequest="50" />  
+                      </Grid>  
+                  </VerticalStackLayout>  
+              </VerticalStackLayout>  
+          </Border>  
+
+          <Border Stroke="LightGray" Padding="15" StrokeShape="RoundRectangle 10">  
+              <VerticalStackLayout Spacing="15">  
+                  <Label Text="System Settings" FontSize="16" FontAttributes="Bold" />  
+
+                  <HorizontalStackLayout Spacing="10">  
+                      <CheckBox IsChecked="{Binding StartOnBootEnabled}" />  
+                      <Label Text="Start on device boot" VerticalOptions="Center" />  
+                  </HorizontalStackLayout>  
+
+                  <Button Text="Save Settings"  
+                          Command="{Binding SaveSettingsCommand}"  
+                          BackgroundColor="#2ecc71"  
+                          TextColor="White"  
+                          Margin="0,10,0,0" />  
+
+                  <Label Text="{Binding StatusMessage}"  
+                         TextColor="DimGray"  
+                         HorizontalOptions="Center" />  
+              </VerticalStackLayout>  
+          </Border>  
+
+          <Label Text="Auto-clear will automatically clear your clipboard after the specified interval. Start on device boot will launch the app automatically when your device starts."  
+                 TextColor="Gray"  
+                 HorizontalOptions="Center"  
+                 HorizontalTextAlignment="Center"  
+                 Margin="0,10,0,0" />  
+
+      </VerticalStackLayout>  
+  </ScrollView>  
+
+</ContentPage>
