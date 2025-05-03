@@ -1,70 +1,56 @@
 ﻿using ClipWipe.App.Services;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+
+using CommunityToolkit.Mvvm.Input;
 
 namespace ClipWipe.App.PageModels;
 
-//TODO change 
-public partial class MainPageViewModel : BaseViewModel
+public partial class MainPageViewModel : ObservableObject
 {
     private readonly IClipboardService _clipboardService;
     private readonly ISettingsService _settingsService;
+
+    //TODO do we need this? I don't think the implementation is done here
     private readonly ClipboardTimerService _clipboardTimerService;
 
-    private string _clipboardContent;
+    [ObservableProperty]
+    private string _clipboardContent = string.Empty;
+
+    [ObservableProperty]
     private bool _hasClipboardContent;
+
+    [ObservableProperty]
     private DateTime? _lastClearedTime;
-    private string _statusMessage;
 
-    public string ClipboardContent
-    {
-        get => _clipboardContent;
-        set => SetProperty(ref _clipboardContent, value);
-    }
+    [ObservableProperty]
+    private string _statusMessage = "Ready to clear clipboard.";
 
-    public bool HasClipboardContent
-    {
-        get => _hasClipboardContent;
-        set => SetProperty(ref _hasClipboardContent, value);
-    }
+    //[ObservableProperty]
+    //private bool _isBusy;
 
-    public DateTime? LastClearedTime
-    {
-        get => _lastClearedTime;
-        set => SetProperty(ref _lastClearedTime, value);
-    }
-
-    public string StatusMessage
-    {
-        get => _statusMessage;
-        set => SetProperty(ref _statusMessage, value);
-    }
-
-    //TODO change these to use RelayCommand per Claude's suggestion
-    public ICommand RefreshClipboardCommand { get; }
-    public ICommand ClearClipboardCommand { get; }
-
-    public MainPageViewModel(IClipboardService clipboardService, ISettingsService settingsService,
+    public MainPageViewModel(
+        IClipboardService clipboardService,
+        ISettingsService settingsService,
         ClipboardTimerService clipboardTimerService)
     {
         _clipboardService = clipboardService;
         _settingsService = settingsService;
         _clipboardTimerService = clipboardTimerService;
 
-        RefreshClipboardCommand = new Command(RefreshClipboard);
-        ClearClipboardCommand = new Command(ClearClipboard);
-
-        RefreshClipboard();
+        // Initial refresh
+        //TODO         RefreshClipboardAsync().SafeFireAndForget();
+        Task.Run(async () => await RefreshClipboardAsync());
     }
 
-    private void RefreshClipboard()
+    [RelayCommand]
+    private async Task RefreshClipboardAsync()
     {
         try
         {
-            HasClipboardContent = _clipboardService.HasClipboardContent();
-
+            HasClipboardContent = await _clipboardService.HasClipboardContentAsync();
             if (HasClipboardContent)
             {
-                ClipboardContent = _clipboardService.GetClipboardContent();
+                ClipboardContent = await _clipboardService.GetClipboardContentAsync();
                 StatusMessage = "Clipboard content loaded successfully.";
             }
             else
@@ -82,14 +68,15 @@ public partial class MainPageViewModel : BaseViewModel
         }
     }
 
-    private void ClearClipboard()
+    [RelayCommand]
+    private async Task ClearClipboardAsync()
     {
         try
         {
-            _clipboardService.ClearClipboard();
+            await _clipboardService.ClearClipboardAsync();
             _settingsService.LastClearTime = DateTime.Now;
 
-            RefreshClipboard();
+            await RefreshClipboardAsync();
 
             StatusMessage = "Clipboard cleared successfully.";
         }
