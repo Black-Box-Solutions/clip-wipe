@@ -1,4 +1,6 @@
-﻿namespace ClipWipe.App.Services;
+﻿using System.Diagnostics;
+
+namespace ClipWipe.App.Services;
 public class ClipboardTimerService
 {
     private readonly IClipboardService _clipboardService;
@@ -29,7 +31,9 @@ public class ClipboardTimerService
         {
             StopTimer();
 
-            _timer = Application.Current.Dispatcher.CreateTimer();
+            Debug.Assert(Application.Current != null, "Application.Current is null!");
+
+            _timer = Application.Current!.Dispatcher.CreateTimer();
             _timer.Interval = TimeSpan.FromMinutes(intervalMinutes);
             _timer.Tick += async (s, e) =>
             {
@@ -38,10 +42,14 @@ public class ClipboardTimerService
             };
 
             _timer.Start();
+
+            // Use Task.CompletedTask to explicitly indicate the method is asynchronous
+            await Task.CompletedTask;
         }
         catch (Exception ex)
         {
             //TODO Log the exception and handle it appropriately
+            Debug.WriteLine(ex);
         }
     }
 
@@ -62,7 +70,7 @@ public class ClipboardTimerService
         catch (Exception e)
         {
             //TODO Log the exception and handle it appropriately
-            Console.WriteLine(e);
+            Debug.WriteLine(e);
             throw;
         }
     }

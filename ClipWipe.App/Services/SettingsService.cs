@@ -13,6 +13,7 @@ public class SettingsService : ISettingsService
     private int _autoClearIntervalMinutes;
     private bool _startOnBootEnabled;
     private DateTime? _lastClearTime;
+    private const int DefaultAutoClearIntervalMinutes = 60;
 
     public SettingsService()
     {
@@ -87,7 +88,7 @@ public class SettingsService : ISettingsService
         await Task.Run(() =>
         {
             _autoClearEnabled = Preferences.Default.Get(AutoClearEnabledKey, false);
-            _autoClearIntervalMinutes = Preferences.Default.Get(AutoClearIntervalKey, 30); // Default 30 minutes
+            _autoClearIntervalMinutes = Preferences.Default.Get(AutoClearIntervalKey, DefaultAutoClearIntervalMinutes);
             _startOnBootEnabled = Preferences.Default.Get(StartOnBootEnabledKey, false);
 
             string lastClearTimeStr = Preferences.Default.Get(LastClearTimeKey, string.Empty);

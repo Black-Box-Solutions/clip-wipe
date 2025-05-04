@@ -5,18 +5,19 @@
 // ---------------------------------------
 public partial class ClipboardService : IClipboardService
 {
-    public Task<string> GetClipboardContentAsync()
+    public async Task<string?> GetClipboardContentAsync()
     {
-        throw new NotImplementedException();
+        return Clipboard.HasText ? await Clipboard.GetTextAsync() : null;
     }
 
-    public Task ClearClipboardAsync()
+    public async Task ClearClipboardAsync()
     {
-        throw new NotImplementedException();
+        await Clipboard.SetTextAsync(null);
+        LastCleared = DateTime.Now;
     }
 
-    public Task<bool> HasClipboardContentAsync()
+    public async Task<bool> HasClipboardContentAsync()
     {
-        throw new NotImplementedException();
+        return await Task.FromResult(Clipboard.HasText);
     }
 }

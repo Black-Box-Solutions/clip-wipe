@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Android.OS;
 
 namespace ClipWipe.App.Services;
 
@@ -9,7 +10,7 @@ public partial class ClipboardService : IClipboardService
 {
     private readonly Context _context = Android.App.Application.Context;
 
-    public async Task<string> GetClipboardContentAsync()
+    public async Task<string?> GetClipboardContentAsync()
     {
         return await Task.Run(() =>
         {
@@ -19,11 +20,11 @@ public partial class ClipboardService : IClipboardService
                 ClipData? clipData = clipboardManager.PrimaryClip;
                 if (clipData?.ItemCount > 0)
                 {
-                    return clipData.GetItemAt(0)?.Text ?? string.Empty;
+                    return clipData.GetItemAt(0)?.Text;
                 }
             }
 
-            return string.Empty;
+            return null;
         });
     }
 
