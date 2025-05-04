@@ -1,7 +1,7 @@
-namespace ClipWipe.App.Converters;
 
 using System.Globalization;
 
+namespace ClipWipe.App.Converters;
 public class InvertedBoolConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

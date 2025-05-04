@@ -41,6 +41,7 @@ public partial class SettingsPageViewModel : ObservableObject
         //TODO fix the async call here
         UpdateTimerServiceAsync().SafeFireAndForget();
     }
+
     partial void OnAutoClearIntervalMinutesChanged(int value)
     {
         //TODO fix the async call here

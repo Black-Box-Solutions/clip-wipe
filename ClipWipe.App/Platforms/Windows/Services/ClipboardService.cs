@@ -7,11 +7,7 @@ public partial class ClipboardService : IClipboardService
 {
     public async Task<string?> GetClipboardContentAsync()
     {
-        if (Clipboard.HasText)
-        {
-            return await Clipboard.GetTextAsync();
-        }
-        return null;
+        return Clipboard.HasText ? await Clipboard.GetTextAsync() : null;
     }
 
     public async Task ClearClipboardAsync()

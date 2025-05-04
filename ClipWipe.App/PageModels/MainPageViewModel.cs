@@ -24,9 +24,6 @@ public partial class MainPageViewModel : ObservableObject
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Ready to clear clipboard.";
 
-    //[ObservableProperty]
-    //private bool _isBusy;
-
     public MainPageViewModel(
         IClipboardService clipboardService,
         ISettingsService settingsService,
