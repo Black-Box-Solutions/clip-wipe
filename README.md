@@ -49,8 +49,8 @@ Copyright (c) 2025 Black Box Solutions, Inc. All rights reserved.
 ## File Structure
 
 ```
-ClipboardManager/
-├── ClipboardManager.csproj
+ClipWipe.App/
+├── ClipWipe.App.csproj
 ├── App.xaml
 ├── App.xaml.cs
 ├── AppShell.xaml
@@ -62,11 +62,10 @@ ClipboardManager/
 ├── Services/
 │   ├── IClipboardService.cs
 │   ├── ClipboardService.cs
+│   ├── ClipboardTimerService.cs
 │   ├── ISettingsService.cs
-│   ├── SettingsService.cs
-│   └── ClipboardTimerService.cs
+│   └── SettingsService.cs
 ├── PageModels/
-│   ├── BaseViewModel.cs
 │   ├── MainPageViewModel.cs
 │   └── SettingsPageViewModel.cs
 ├── Pages/
@@ -77,9 +76,9 @@ ClipboardManager/
 ├── Platforms/
 │   └── Android/
 │       ├── AndroidManifest.xml
-│       ├── MainActivity.cs
-│       ├── ClipboardService.cs
 │       ├── BootReceiver.cs
+│       ├── ClipboardService.cs
+│       ├── MainActivity.cs
 │       └── Resources/
 │           └── values/
 │               └── colors.xml
@@ -87,14 +86,14 @@ ClipboardManager/
     ├── AppIcon/
     │   ├── appicon.svg
     │   └── appiconfg.svg
-    ├── Splash/
-    │   └── splash.svg
     ├── Fonts/
     │   ├── OpenSans-Regular.ttf
     │   └── OpenSans-Semibold.ttf
     ├── Images/
     │   ├── clipboard.png
     │   └── settings.png
+    ├── Splash/
+    │   └── splash.svg
     └── Styles/
         ├── Colors.xaml
         └── Styles.xaml
