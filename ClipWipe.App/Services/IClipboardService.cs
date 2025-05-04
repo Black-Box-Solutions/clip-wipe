@@ -2,7 +2,7 @@
 
 public interface IClipboardService
 {
-    Task<string> GetClipboardContentAsync();
+    Task<string?> GetClipboardContentAsync();
 
     Task ClearClipboardAsync();
 

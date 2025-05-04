@@ -7,16 +7,12 @@ namespace ClipWipe.App.Services;
 // ---------------------------------------
 public partial class ClipboardService : IClipboardService
 {
-    public async Task<string> GetClipboardContentAsync()
+    public async Task<string?> GetClipboardContentAsync()
     {
-        return await Task.Run(() =>
+        return await Task.Run(static () =>
         {
-            var pasteboard = UIPasteboard.General;
-            if (pasteboard.HasStrings)
-            {
-                return pasteboard.String ?? string.Empty;
-            }
-            return string.Empty;
+            UIPasteboard pasteboard = UIPasteboard.General;
+            return pasteboard.HasStrings ? pasteboard.String : null;
         });
     }
 
@@ -24,16 +20,16 @@ public partial class ClipboardService : IClipboardService
     {
         await Task.Run(() =>
         {
-            UIPasteboard.General.String = string.Empty;
+            UIPasteboard.General.String = null;
             LastCleared = DateTime.Now;
         });
     }
 
     public async Task<bool> HasClipboardContentAsync()
     {
-        return await Task.Run(() =>
+        return await Task.Run(static () =>
         {
-            var pasteboard = UIPasteboard.General;
+            UIPasteboard pasteboard = UIPasteboard.General;
             return pasteboard.HasStrings && !string.IsNullOrEmpty(pasteboard.String);
         });
     }
