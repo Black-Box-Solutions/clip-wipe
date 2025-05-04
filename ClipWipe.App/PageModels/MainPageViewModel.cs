@@ -1,6 +1,5 @@
 ﻿using ClipWipe.App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-
 using CommunityToolkit.Mvvm.Input;
 
 namespace ClipWipe.App.PageModels;
@@ -14,16 +13,16 @@ public partial class MainPageViewModel : ObservableObject
     private readonly ClipboardTimerService _clipboardTimerService;
 
     [ObservableProperty]
-    private string _clipboardContent = string.Empty;
+    public partial string? ClipboardContent { get; set; }
 
     [ObservableProperty]
-    private bool _hasClipboardContent;
+    public partial bool HasClipboardContent { get; set; }
 
     [ObservableProperty]
-    private DateTime? _lastClearedTime;
+    public partial DateTime? LastClearedTime { get; set; }
 
     [ObservableProperty]
-    private string _statusMessage = "Ready to clear clipboard.";
+    public partial string StatusMessage { get; set; } = "Ready to clear clipboard.";
 
     //[ObservableProperty]
     //private bool _isBusy;

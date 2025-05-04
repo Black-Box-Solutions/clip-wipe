@@ -12,16 +12,16 @@ public partial class SettingsPageViewModel : ObservableObject
     private readonly ClipboardTimerService _clipboardTimerService;
 
     [ObservableProperty]
-    private bool _autoClearEnabled;
+    public partial bool AutoClearEnabled { get; set; }
 
     [ObservableProperty]
-    private int _autoClearIntervalMinutes;
+    public partial int AutoClearIntervalMinutes { get; set; }
 
     [ObservableProperty]
-    private bool _startOnBootEnabled;
+    public partial bool StartOnBootEnabled { get; set; }
 
     [ObservableProperty]
-    private string _statusMessage = "Ready to load settings.";
+    public partial string StatusMessage { get; set; } = "Ready to load settings.";
 
     //[ObservableProperty]
     //private bool _isBusy;
