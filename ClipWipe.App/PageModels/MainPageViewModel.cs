@@ -38,6 +38,12 @@ public partial class MainPageViewModel : ObservableObject
         Task.Run(async () => await RefreshClipboardAsync());
     }
 
+    public void UpdateClipboardContent(string content)
+    {
+        ClipboardContent = content;
+        HasClipboardContent = !string.IsNullOrEmpty(content);
+    }
+
     [RelayCommand]
     private async Task RefreshClipboardAsync()
     {
