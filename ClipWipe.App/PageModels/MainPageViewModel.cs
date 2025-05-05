@@ -19,7 +19,7 @@ public partial class MainPageViewModel : ObservableObject
     public partial bool HasClipboardContent { get; set; }
 
     [ObservableProperty]
-    public partial DateTime? LastClearedTime { get; set; }
+    public partial DateTimeOffset? LastClearedTime { get; set; }
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Ready to clear clipboard.";
@@ -70,7 +70,7 @@ public partial class MainPageViewModel : ObservableObject
         try
         {
             await _clipboardService.ClearClipboardAsync();
-            _settingsService.LastClearTime = DateTime.Now;
+            _settingsService.LastClearTime = DateTimeOffset.UtcNow;
 
             await RefreshClipboardAsync();
 

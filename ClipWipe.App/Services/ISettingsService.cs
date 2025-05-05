@@ -8,7 +8,7 @@ public interface ISettingsService
 
     bool StartOnBootEnabled { get; set; }
 
-    DateTime? LastClearTime { get; set; }
+    DateTimeOffset? LastClearTime { get; set; }
 
     Task SaveSettingsAsync();
 

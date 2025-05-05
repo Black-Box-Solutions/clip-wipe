@@ -8,5 +8,5 @@ public interface IClipboardService
 
     Task<bool> HasClipboardContentAsync();
 
-    DateTime? LastCleared { get; }
+    DateTimeOffset? LastCleared { get; }
 }
