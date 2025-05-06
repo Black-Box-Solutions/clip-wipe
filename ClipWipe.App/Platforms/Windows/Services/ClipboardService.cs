@@ -28,9 +28,9 @@ public partial class ClipboardService
         UpdateLastCleared();
     }
 
-    public async Task<bool> HasClipboardContentAsync()
+    public Task<bool> HasClipboardContentAsync()
     {
-        return await Task.FromResult(Clipboard.HasText);
+        return Task.FromResult(Clipboard.HasText);
     }
 
     public void StartListening()
