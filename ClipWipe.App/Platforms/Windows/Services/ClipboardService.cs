@@ -24,8 +24,8 @@ public partial class ClipboardService
 
     public async Task ClearClipboardAsync()
     {
-        await Clipboard.SetTextAsync(null);
-        LastCleared = DateTime.Now;
+        await Clipboard.SetTextAsync(string.Empty);
+        UpdateLastCleared();
     }
 
     public async Task<bool> HasClipboardContentAsync()

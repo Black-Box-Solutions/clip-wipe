@@ -21,7 +21,7 @@ public partial class ClipboardService : IClipboardService
         await Task.Run(() =>
         {
             UIPasteboard.General.String = string.Empty;
-            LastCleared = DateTimeOffset.UtcNow;
+            UpdateLastCleared();
         });
     }
 
