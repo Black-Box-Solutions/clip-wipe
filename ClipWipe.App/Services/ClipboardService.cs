@@ -1,4 +1,6 @@
-﻿namespace ClipWipe.App.Services;
+﻿using Microsoft.Extensions.Logging;
+
+namespace ClipWipe.App.Services;
 
 /// <summary>
 /// Platform-agnostic implementation for clipboard operations.
@@ -14,6 +16,12 @@ public sealed partial class ClipboardService : IClipboardService
     // The platform-specific implementations will be in Platform folders
 
     private bool _isDisposed;
+    private readonly ILogger<ClipboardService> _logger;
+
+    public ClipboardService(ILogger<ClipboardService> logger)
+    {
+        _logger = logger;
+    }
 
     public void Dispose()
     {
