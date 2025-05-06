@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.UI.Xaml;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.WindowsAndMessaging;
@@ -53,20 +54,11 @@ public partial class ClipboardService
                 throw new InvalidOperationException("Failed to add clipboard format listener.");
             }
         }
-        catch
+        catch (Exception ex)
         {
-            if (_window is not null)
-            {
-                _window.Activated -= OnWindowActivated;
-                _window = null;
-            }
-
-            if (_hwnd != default)
-            {
-                PInvoke.RemoveClipboardFormatListener(_hwnd);
-                _hwnd = default;
-            }
-
+            // Cleanup if an error occurs during initialization
+            _logger.LogError(ex, $"Error while starting clipboard listener in {nameof(StartListening)}.");
+            Cleanup();
             throw;
         }
     }
@@ -80,14 +72,27 @@ public partial class ClipboardService
             throw new InvalidOperationException("Clipboard listener is not running.");
         }
 
-        // Ensure that the window listener is properly stopped before releasing hwnd
-        if (!PInvoke.RemoveClipboardFormatListener(_hwnd))
+        try
         {
-            throw new InvalidOperationException("Failed to remove clipboard format listener.");
-        }
+            // Ensure that the window listener is properly stopped before releasing hwnd
+            if (!PInvoke.RemoveClipboardFormatListener(_hwnd))
+            {
+                throw new InvalidOperationException("Failed to remove clipboard format listener.");
+            }
 
-        _window.Activated -= OnWindowActivated;
-        _window = null;
+            _window.Activated -= OnWindowActivated;
+            _window = null;
+        }
+        catch (Exception ex)
+        {
+            // Cleanup if an error occurs during stopping
+            _logger.LogError(ex, $"Error while stopping clipboard listener in {nameof(StopListening)}.");
+            throw;
+        }
+        finally
+        {
+            Cleanup();
+        }
     }
 
     private void OnWindowActivated(object sender, WindowActivatedEventArgs e)
@@ -114,18 +119,29 @@ public partial class ClipboardService
         }
     }
 
-    private void HandleClipboardChanged()
+    //TODO verify this is correct
+    private async void OnClipboardUpdated()
     {
         //TODO: Uncomment and implement clipboard content retrieval for Windows
-        //      string? content = UIPasteboard.General.String;
-        //      ClipboardChanged?.Invoke(this, content ?? string.Empty);
-        ClipboardChanged?.Invoke(this, string.Empty);
+        string? content = Clipboard.HasText ? await Clipboard.GetTextAsync() : null;
+        ClipboardChanged?.Invoke(this, content ?? string.Empty);
+
+        _logger.LogInformation("Clipboard updated: {Content}", content);
     }
 
-    private static void OnClipboardUpdated()
+    //TODO this should probably be in the Dispose method
+    private void Cleanup()
     {
-        // Handle clipboard content changes here
-        Console.WriteLine("Clipboard content updated.");
+        if (_window is not null)
+        {
+            _window.Activated -= OnWindowActivated;
+            _window = null;
+        }
+        if (_hwnd != default)
+        {
+            PInvoke.RemoveClipboardFormatListener(_hwnd);
+            _hwnd = default;
+        }
     }
 
     partial void DisposePlatformSpecificUnmanaged()
