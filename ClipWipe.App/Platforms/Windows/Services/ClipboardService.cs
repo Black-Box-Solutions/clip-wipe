@@ -40,15 +40,34 @@ public partial class ClipboardService
             throw new InvalidOperationException("Clipboard listener is already running.");
         }
 
-        _window = new Window();
-        _window.Activated += OnWindowActivated;
-
-        nint hwnd = WinRT.Interop.WindowNative.GetWindowHandle(_window);
-        _hwnd = new HWND(hwnd);
-
-        if (!PInvoke.AddClipboardFormatListener(_hwnd))
+        try
         {
-            throw new InvalidOperationException("Failed to add clipboard format listener.");
+            _window = new Window();
+            _window.Activated += OnWindowActivated;
+
+            nint hwnd = WinRT.Interop.WindowNative.GetWindowHandle(_window);
+            _hwnd = new HWND(hwnd);
+
+            if (!PInvoke.AddClipboardFormatListener(_hwnd))
+            {
+                throw new InvalidOperationException("Failed to add clipboard format listener.");
+            }
+        }
+        catch
+        {
+            if (_window is not null)
+            {
+                _window.Activated -= OnWindowActivated;
+                _window = null;
+            }
+
+            if (_hwnd != default)
+            {
+                PInvoke.RemoveClipboardFormatListener(_hwnd);
+                _hwnd = default;
+            }
+
+            throw;
         }
     }
 
@@ -78,13 +97,20 @@ public partial class ClipboardService
             return;
         }
 
-        // Handle clipboard update messages
-        while (PInvoke.PeekMessage(out MSG message, _hwnd, 0, 0, PEEK_MESSAGE_REMOVE_TYPE.PM_REMOVE))
+        try
         {
-            if (message.message == PInvoke.WM_CLIPBOARDUPDATE)
+            // Handle clipboard update messages
+            while (PInvoke.PeekMessage(out MSG message, _hwnd, 0, 0, PEEK_MESSAGE_REMOVE_TYPE.PM_REMOVE))
             {
-                OnClipboardUpdated();
+                if (message.message == PInvoke.WM_CLIPBOARDUPDATE)
+                {
+                    OnClipboardUpdated();
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error while processing clipboard update messages in {nameof(OnWindowActivated)}.");
         }
     }
 
