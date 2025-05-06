@@ -18,7 +18,11 @@ public partial class ClipboardService
 
     public void StartListening()
     {
-        _clipboardManager ??= (Android.Content.ClipboardManager?)_context.GetSystemService(Context.ClipboardService);
+        if (_clipboardManager is null)
+        {
+            _clipboardManager = (Android.Content.ClipboardManager?)_context.GetSystemService(Context.ClipboardService);
+        }
+
         if (_clipboardManager is not null)
         {
             _clipboardListener = new ClipboardListener(this);
