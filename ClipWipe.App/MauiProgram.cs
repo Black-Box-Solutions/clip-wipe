@@ -48,6 +48,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<IClipboardService, ClipboardService>();
         builder.Services.AddSingleton<ISettingsService, SettingsService>();
         builder.Services.AddSingleton<ClipboardTimerService>();
+        //TODO should i use this or something in MVVM toolkit (if it exists)
+        //builder.Services.AddSingleton<IErrorHandler, ModalErrorHandler>();
 
         // Register PageModels
         builder.Services.AddTransient<MainPageViewModel>();
