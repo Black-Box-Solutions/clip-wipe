@@ -70,6 +70,10 @@
 		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.60" />
+		<!--
+		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+		-->
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
 		  <PrivateAssets>all</PrivateAssets>
