@@ -97,7 +97,7 @@ public partial class ClipboardService
         ObjectDisposedException.ThrowIf(_isDisposed, this);
         lock (_lock)
         {
-            if (_hwnd == default || _window is null)
+            if (_hwnd == HWND.Null || _window is null)
             {
                 throw new InvalidOperationException("Clipboard listener is not running.");
             }
@@ -169,10 +169,10 @@ public partial class ClipboardService
                 _window.Activated -= OnWindowActivated;
                 _window = null;
             }
-            if (_hwnd != default)
+            if (_hwnd != HWND.Null)
             {
                 PInvoke.RemoveClipboardFormatListener(_hwnd);
-                _hwnd = default;
+                _hwnd = HWND.Null;
             }
         }
     }
@@ -183,10 +183,10 @@ public partial class ClipboardService
         lock (_lock)
         {
             //TODO this is done in StopListening()
-            if (_hwnd != default)
+            if (_hwnd != HWND.Null)
             {
                 //PInvoke.RemoveClipboardFormatListener(_hwnd);
-                _hwnd = default;
+                _hwnd = HWND.Null;
             }
         }
     }
