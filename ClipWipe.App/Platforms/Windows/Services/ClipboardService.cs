@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using System.Diagnostics.CodeAnalysis;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.WindowsAndMessaging;
@@ -13,6 +14,7 @@ namespace ClipWipe.App.Services;
 /// <remarks>This service allows you to retrieve clipboard content, clear the clipboard, check for clipboard
 /// content, and start or stop listening for clipboard updates. It is designed for use in Windows environments and
 /// relies on platform-specific APIs for clipboard operations and event handling.</remarks>
+[SuppressMessage("Maintainability", "CA1513:Use ObjectDisposedException throw helper", Justification = "We need to use Interlocked")]
 public partial class ClipboardService
 {
     private static readonly Action<ILogger, string, Exception?> _logClipboardUpdated =
@@ -150,8 +152,10 @@ public partial class ClipboardService
     private async Task OnClipboardUpdatedAsync()
     {
         string? content = await GetClipboardContentAsync();
-        ClipboardChanged?.Invoke(this, content ?? string.Empty);
 
+        // Use a local variable to ensure thread safety
+        EventHandler<string>? handler = ClipboardChanged;
+        handler?.Invoke(this, content ?? string.Empty);
         _logClipboardUpdated(_logger, content ?? string.Empty, null);
     }
 

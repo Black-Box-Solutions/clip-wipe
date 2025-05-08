@@ -15,7 +15,7 @@ public sealed partial class ClipboardService : IClipboardService
 
     // The platform-specific implementations will be in Platform folders
 
-    private bool _isDisposed;
+    private int _isDisposed;
     private readonly ILogger<ClipboardService> _logger;
 
     public ClipboardService(ILogger<ClipboardService> logger)
@@ -31,9 +31,9 @@ public sealed partial class ClipboardService : IClipboardService
 
     private void Dispose(bool disposing)
     {
-        if (_isDisposed)
+        if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) == 1)
         {
-            return;
+            return; // Already disposed
         }
 
         if (disposing)
@@ -45,8 +45,6 @@ public sealed partial class ClipboardService : IClipboardService
 
         // Release unmanaged resources
         DisposePlatformSpecificUnmanaged();   // Call the platform-specific partial method
-
-        _isDisposed = true;
     }
 
     partial void DisposePlatformSpecificManaged();
