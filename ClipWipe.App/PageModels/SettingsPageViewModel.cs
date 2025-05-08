@@ -1,13 +1,14 @@
 ﻿using ClipWipe.App.Extensions;
 using ClipWipe.App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 
 namespace ClipWipe.App.PageModels;
 
 public partial class SettingsPageViewModel : ObservableObject
 {
+    private readonly ILogger<SettingsPageViewModel> _logger;
     private readonly ISettingsService _settingsService;
     private readonly ClipboardTimerService _clipboardTimerService;
 
@@ -26,10 +27,11 @@ public partial class SettingsPageViewModel : ObservableObject
     //[ObservableProperty]
     //private bool _isBusy;
 
-    public SettingsPageViewModel(ISettingsService settingsService, ClipboardTimerService clipboardTimerService)
+    public SettingsPageViewModel(ISettingsService settingsService, ClipboardTimerService clipboardTimerService, ILogger<SettingsPageViewModel> logger)
     {
         _settingsService = settingsService;
         _clipboardTimerService = clipboardTimerService;
+        _logger = logger;
 
         // Initial load
         //TODO LoadSettingsAsync().SafeFireAndForget();
