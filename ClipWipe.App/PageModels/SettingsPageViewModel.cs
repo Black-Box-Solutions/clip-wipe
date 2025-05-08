@@ -1,4 +1,4 @@
-﻿using ClipWipe.App.Extensions;
+﻿using AsyncAwaitBestPractices;
 using ClipWipe.App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -34,20 +34,17 @@ public partial class SettingsPageViewModel : ObservableObject
         _logger = logger;
 
         // Initial load
-        //TODO LoadSettingsAsync().SafeFireAndForget();
-        Task.Run(async () => await LoadSettingsAsync());
+        LoadSettingsAsync().SafeFireAndForget(ex => _logger.LogError(ex, "Error while loading settings"));
     }
 
     partial void OnAutoClearEnabledChanged(bool value)
     {
-        //TODO fix the async call here
-        UpdateTimerServiceAsync().SafeFireAndForget();
+        UpdateTimerServiceAsync().SafeFireAndForget(ex => _logger.LogError(ex, "Error updating timer service"));
     }
 
     partial void OnAutoClearIntervalMinutesChanged(int value)
     {
-        //TODO fix the async call here
-        UpdateTimerServiceAsync().SafeFireAndForget();
+        UpdateTimerServiceAsync().SafeFireAndForget(ex => _logger.LogError(ex, "Error updating timer service"));
     }
 
     partial void OnStartOnBootEnabledChanged(bool value)
