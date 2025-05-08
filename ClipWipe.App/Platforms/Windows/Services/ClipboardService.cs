@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AsyncAwaitBestPractices;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using System.Diagnostics.CodeAnalysis;
 using Windows.Win32;
@@ -138,7 +139,7 @@ public partial class ClipboardService
             {
                 if (message.message == PInvoke.WM_CLIPBOARDUPDATE)
                 {
-                    _ = OnClipboardUpdatedAsync(); // Fire-and-forget, but safer with Task
+                    OnClipboardUpdatedAsync().SafeFireAndForget(ex => _logger.LogError(ex, "Error while processing clipboard update."));
                 }
             }
         }
