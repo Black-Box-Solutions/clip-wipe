@@ -1,19 +1,23 @@
-﻿using ClipWipe.App.Extensions;
+﻿using AsyncAwaitBestPractices;
 using ClipWipe.App.Services;
+
+using Microsoft.Extensions.Logging;
 
 namespace ClipWipe.App;
 
 public partial class App : Application
 {
+    private readonly ILogger<App> _logger;
     private readonly ClipboardTimerService _clipboardTimerService;
     private readonly IClipboardService _clipboardService;
 
-    public App(ClipboardTimerService clipboardTimerService, IClipboardService clipboardService)
+    public App(ClipboardTimerService clipboardTimerService, IClipboardService clipboardService, ILogger<App> logger)
     {
         InitializeComponent();
 
         _clipboardTimerService = clipboardTimerService;
         _clipboardService = clipboardService;
+        _logger = logger;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -37,7 +41,11 @@ public partial class App : Application
         _clipboardService.StartListening();
 
         // Start timer service when app starts
-        _clipboardTimerService.InitializeTimerFromSettingsAsync().SafeFireAndForget();
+        _clipboardTimerService.InitializeTimerFromSettingsAsync().SafeFireAndForget(ex =>
+        {
+            // Handle any exceptions that occur during initialization
+            _logger.LogError(ex, "Error initializing timer");
+        });
     }
 
     protected override void OnSleep()
@@ -46,12 +54,19 @@ public partial class App : Application
 
         // App going to background
         _clipboardService.StopListening();
-        _clipboardTimerService.SaveSettingsAsync().SafeFireAndForget();
+        _clipboardTimerService.SaveSettingsAsync().SafeFireAndForget(ex =>
+        {
+            _logger.LogError(ex, "Error saving settings during sleep");
+        });
     }
 
     protected override void OnResume()
     {
         base.OnResume();
         _clipboardService.StartListening();
+        _clipboardTimerService.InitializeTimerFromSettingsAsync().SafeFireAndForget(ex =>
+        {
+            _logger.LogError(ex, "Error re-initializing timer on resume");
+        });
     }
 }
