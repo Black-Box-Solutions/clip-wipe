@@ -42,19 +42,36 @@ public partial class ClipboardService
             new EventId(4, nameof(StopListening)),
             "Error while stopping clipboard listener in {MethodName}.");
 
-    private readonly Lock _lock = new Lock();
+    private readonly SemaphoreSlim _clipboardSemaphore = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _windowSemaphore = new SemaphoreSlim(1, 1);
     private Window? _window;
     private HWND _hwnd;
 
     public async Task<string?> GetClipboardContentAsync()
     {
-        return Clipboard.HasText ? await Clipboard.GetTextAsync() : null;
+        await _clipboardSemaphore.WaitAsync();
+        try
+        {
+            return Clipboard.HasText ? await Clipboard.GetTextAsync() : null;
+        }
+        finally
+        {
+            _clipboardSemaphore.Release();
+        }
     }
 
     public async Task ClearClipboardAsync()
     {
-        await Clipboard.SetTextAsync(string.Empty);
-        UpdateLastCleared();
+        await _clipboardSemaphore.WaitAsync();
+        try
+        {
+            await Clipboard.SetTextAsync(string.Empty);
+            UpdateLastCleared();
+        }
+        finally
+        {
+            _clipboardSemaphore.Release();
+        }
     }
 
     public Task<bool> HasClipboardContentAsync()
@@ -64,7 +81,13 @@ public partial class ClipboardService
 
     public void StartListening()
     {
-        lock (_lock)
+        if (Interlocked.CompareExchange(ref _isDisposed, 0, 0) == 1)
+        {
+            throw new ObjectDisposedException(nameof(ClipboardService));
+        }
+
+        _windowSemaphore.Wait();
+        try
         {
             if (_window is not null)
             {
@@ -91,12 +114,21 @@ public partial class ClipboardService
                 throw;
             }
         }
+        finally
+        {
+            _windowSemaphore.Release();
+        }
     }
 
     public void StopListening()
     {
-        ObjectDisposedException.ThrowIf(_isDisposed, this);
-        lock (_lock)
+        if (Interlocked.CompareExchange(ref _isDisposed, 0, 0) == 1)
+        {
+            throw new ObjectDisposedException(nameof(ClipboardService));
+        }
+
+        _windowSemaphore.Wait();
+        try
         {
             if (_hwnd == HWND.Null || _window is null)
             {
@@ -122,6 +154,10 @@ public partial class ClipboardService
             {
                 Cleanup();
             }
+        }
+        finally
+        {
+            _windowSemaphore.Release();
         }
     }
 
@@ -149,21 +185,30 @@ public partial class ClipboardService
         }
     }
 
-    //TODO verify this is correct
     private async Task OnClipboardUpdatedAsync()
     {
-        string? content = await GetClipboardContentAsync();
+        await _clipboardSemaphore.WaitAsync();
+        try
+        {
+            string? content = await GetClipboardContentAsync();
 
-        // Use a local variable to ensure thread safety
-        EventHandler<string>? handler = ClipboardChanged;
-        handler?.Invoke(this, content ?? string.Empty);
-        _logClipboardUpdated(_logger, content ?? string.Empty, null);
+            // Use a local variable to ensure thread safety
+            EventHandler<string>? handler = ClipboardChanged;
+            handler?.Invoke(this, content ?? string.Empty);
+
+            _logClipboardUpdated(_logger, content ?? string.Empty, null);
+        }
+        finally
+        {
+            _clipboardSemaphore.Release();
+        }
     }
 
     //TODO this should probably be in the Dispose method
     private void Cleanup()
     {
-        lock (_lock)
+        _windowSemaphore.Wait();
+        try
         {
             if (_window is not null)
             {
@@ -176,12 +221,17 @@ public partial class ClipboardService
                 _hwnd = HWND.Null;
             }
         }
+        finally
+        {
+            _windowSemaphore.Release();
+        }
     }
 
     partial void DisposePlatformSpecificUnmanaged()
     {
         // Windows-specific cleanup logic
-        lock (_lock)
+        _windowSemaphore.Wait();
+        try
         {
             //TODO this is done in StopListening()
             if (_hwnd != HWND.Null)
@@ -190,5 +240,17 @@ public partial class ClipboardService
                 _hwnd = HWND.Null;
             }
         }
+        finally
+        {
+            _windowSemaphore.Release();
+        }
+    }
+
+    partial void DisposePlatformSpecificManaged()
+    {
+        // Windows-specific cleanup logic
+        //TODO these can't be disposed before the unmanaged resources are released!
+        //_windowSemaphore.Dispose();
+        //_clipboardSemaphore.Dispose();
     }
 }
