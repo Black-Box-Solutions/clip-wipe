@@ -1,13 +1,14 @@
-﻿using ClipWipe.App.Extensions;
+﻿using AsyncAwaitBestPractices;
 using ClipWipe.App.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 
 namespace ClipWipe.App.PageModels;
 
 public partial class SettingsPageViewModel : ObservableObject
 {
+    private readonly ILogger<SettingsPageViewModel> _logger;
     private readonly ISettingsService _settingsService;
     private readonly ClipboardTimerService _clipboardTimerService;
 
@@ -26,26 +27,24 @@ public partial class SettingsPageViewModel : ObservableObject
     //[ObservableProperty]
     //private bool _isBusy;
 
-    public SettingsPageViewModel(ISettingsService settingsService, ClipboardTimerService clipboardTimerService)
+    public SettingsPageViewModel(ISettingsService settingsService, ClipboardTimerService clipboardTimerService, ILogger<SettingsPageViewModel> logger)
     {
         _settingsService = settingsService;
         _clipboardTimerService = clipboardTimerService;
+        _logger = logger;
 
         // Initial load
-        //TODO LoadSettingsAsync().SafeFireAndForget();
-        Task.Run(async () => await LoadSettingsAsync());
+        LoadSettingsAsync().SafeFireAndForget(ex => _logger.LogError(ex, "Error while loading settings"));
     }
 
     partial void OnAutoClearEnabledChanged(bool value)
     {
-        //TODO fix the async call here
-        UpdateTimerServiceAsync().SafeFireAndForget();
+        UpdateTimerServiceAsync().SafeFireAndForget(ex => _logger.LogError(ex, "Error updating timer service"));
     }
 
     partial void OnAutoClearIntervalMinutesChanged(int value)
     {
-        //TODO fix the async call here
-        UpdateTimerServiceAsync().SafeFireAndForget();
+        UpdateTimerServiceAsync().SafeFireAndForget(ex => _logger.LogError(ex, "Error updating timer service"));
     }
 
     partial void OnStartOnBootEnabledChanged(bool value)

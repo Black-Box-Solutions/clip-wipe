@@ -12,7 +12,7 @@ public class SettingsService : ISettingsService
     private bool _autoClearEnabled;
     private int _autoClearIntervalMinutes;
     private bool _startOnBootEnabled;
-    private DateTime? _lastClearTime;
+    private DateTimeOffset? _lastClearTime;
     private const int DefaultAutoClearIntervalMinutes = 60;
 
     public SettingsService()
@@ -51,7 +51,7 @@ public class SettingsService : ISettingsService
         }
     }
 
-    public DateTime? LastClearTime
+    public DateTimeOffset? LastClearTime
     {
         get => _lastClearTime;
         set
@@ -92,7 +92,7 @@ public class SettingsService : ISettingsService
             _startOnBootEnabled = Preferences.Default.Get(StartOnBootEnabledKey, false);
 
             string lastClearTimeStr = Preferences.Default.Get(LastClearTimeKey, string.Empty);
-            if (!string.IsNullOrEmpty(lastClearTimeStr) && DateTime.TryParse(lastClearTimeStr, out DateTime lastClearTime))
+            if (!string.IsNullOrEmpty(lastClearTimeStr) && DateTimeOffset.TryParse(lastClearTimeStr, out DateTimeOffset lastClearTime))
             {
                 _lastClearTime = lastClearTime;
             }

@@ -1,0 +1,6 @@
+﻿ AddClipboardFormatListener
+ RemoveClipboardFormatListener
+ PeekMessage
+ HWND
+ MSG
+ WM_CLIPBOARDUPDATE

@@ -3,14 +3,18 @@
 A .NET MAUI application for managing clipboard content on mobile devices
 manually or at a specified interval.
 
+<!-- Badges -->
+[![.NET MAUI](https://img.shields.io/badge/.NET%20MAUI-9.0-blue.svg)](https://dotnet.microsoft.com/apps/maui)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+
 <!--TOC-->
   - [Features](#features)
   - [Requirements](#requirements)
   - [Implementation Details](#implementation-details)
-  - [d access alerts, this applicat](#d-access-alerts-this-applicat)
-  - [nager.cspr](#nager.cspr)
-  - [s
-├── MauiProgra](#s-mauiprogra)
+  - [Samsung OneUI Compatibility](#samsung-oneui-compatibility)
+  - [License](#license)
+  - [File Structure](#file-structure)
 <!--/TOC-->
 
 ## Features

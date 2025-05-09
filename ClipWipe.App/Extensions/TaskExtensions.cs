@@ -14,6 +14,7 @@ public static class TaskExtensions
     /// <param name="task">Task to Fire and Forget.</param>
     /// <param name="errorHandler">Optional error handler.</param>
     /// <param name="logger">Optional logger.</param>
+    [Obsolete("Use SafeFireAndForget from AsyncAwaitBestPractices instead.")]
     public static void SafeFireAndForget(this Task task, IErrorHandler? errorHandler = null, ILogger? logger = null)
     {
         ArgumentNullException.ThrowIfNull(task);
