@@ -78,6 +78,7 @@ public partial class ClipboardService
     {
         await Task.Run(() =>
         {
+            // Android's implementation varies by manufacturer, but we'll just clear the current clipboard
             if (_context.GetSystemService(Context.ClipboardService) is Android.Content.ClipboardManager clipboardManager)
             {
                 if (Build.VERSION.SdkInt <= BuildVersionCodes.OMr1) // Check if API level is 27 or lower

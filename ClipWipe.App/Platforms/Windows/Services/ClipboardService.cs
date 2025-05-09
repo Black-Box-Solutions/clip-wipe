@@ -236,6 +236,7 @@ public partial class ClipboardService
             //TODO this is done in StopListening()
             if (_hwnd != HWND.Null)
             {
+                //TODO should this be moved?
                 //PInvoke.RemoveClipboardFormatListener(_hwnd);
                 _hwnd = HWND.Null;
             }
