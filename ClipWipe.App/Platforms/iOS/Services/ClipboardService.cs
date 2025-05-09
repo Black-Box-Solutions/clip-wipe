@@ -43,6 +43,7 @@ public partial class ClipboardService
 
     private void HandleClipboardChanged(NSNotification notification)
     {
+        //TODO is this thread-safe? is more synchronization needed here?
         string? content = UIPasteboard.General.String;
 
         // Use a local variable to ensure thread safety
