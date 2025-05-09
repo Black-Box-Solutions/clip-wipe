@@ -21,7 +21,7 @@ public partial class MainPage : ContentPage
         base.OnAppearing();
 
         // Subscribe to clipboard changes
-        _clipboardService.ClipboardChanged += OnClipboardChanged;
+        _clipboardService.ClipboardContentChanged += OnClipboardChanged;
 
         if (_viewModel.RefreshClipboardCommand.CanExecute(null))
         {
@@ -34,7 +34,7 @@ public partial class MainPage : ContentPage
         base.OnDisappearing();
 
         // Unsubscribe from clipboard changes when the page is not visible
-        _clipboardService.ClipboardChanged -= OnClipboardChanged;
+        _clipboardService.ClipboardContentChanged -= OnClipboardChanged;
     }
 
     private void OnClipboardChanged(object? sender, string content)

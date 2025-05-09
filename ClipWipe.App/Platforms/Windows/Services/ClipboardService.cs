@@ -193,7 +193,7 @@ public partial class ClipboardService
             string? content = await GetClipboardContentAsync();
 
             // Use a local variable to ensure thread safety
-            EventHandler<string>? handler = ClipboardChanged;
+            EventHandler<string>? handler = ClipboardContentChanged;
             handler?.Invoke(this, content ?? string.Empty);
 
             _logClipboardUpdated(_logger, content ?? string.Empty, null);

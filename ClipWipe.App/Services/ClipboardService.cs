@@ -9,7 +9,7 @@ public sealed partial class ClipboardService : IClipboardService
 {
     // This partial class will be implemented differently for each platform
     // We'll define the common properties here
-    public event EventHandler<string>? ClipboardChanged;
+    public event EventHandler<string>? ClipboardContentChanged;
 
     public DateTimeOffset? LastCleared { get; private set; }
 
