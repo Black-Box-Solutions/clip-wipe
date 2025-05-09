@@ -47,7 +47,7 @@ public partial class ClipboardService
         string? content = UIPasteboard.General.String;
 
         // Use a local variable to ensure thread safety
-        EventHandler<string>? handler = ClipboardChanged;
+        EventHandler<string>? handler = ClipboardContentChanged;
         handler?.Invoke(this, content ?? string.Empty);
     }
 

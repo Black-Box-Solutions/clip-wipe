@@ -132,7 +132,7 @@ public partial class ClipboardService
             }
 
             // Use a local variable to ensure thread safety
-            EventHandler<string>? handler = _service.ClipboardChanged;
+            EventHandler<string>? handler = _service.ClipboardContentChanged;
             handler?.Invoke(_service, content ?? string.Empty);
         }
     }

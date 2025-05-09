@@ -2,7 +2,7 @@
 
 public interface IClipboardService : IDisposable
 {
-    event EventHandler<string>? ClipboardChanged;
+    event EventHandler<string>? ClipboardContentChanged;
 
     void StartListening();
 
