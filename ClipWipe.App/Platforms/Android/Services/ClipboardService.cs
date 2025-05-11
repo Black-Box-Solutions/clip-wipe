@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.OS;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
 
 namespace ClipWipe.App.Services;
@@ -20,41 +21,41 @@ public partial class ClipboardService
 
     public void StartListening()
     {
-        if (Interlocked.CompareExchange(ref _isDisposed, 0, 0) == 1)
-        {
-            throw new ObjectDisposedException(nameof(ClipboardService));
-        }
+        //if (Interlocked.CompareExchange(ref _isDisposed, 0, 0) == 1)
+        //{
+        //    throw new ObjectDisposedException(nameof(ClipboardService));
+        //}
 
-        if (_clipboardManager is null)
-        {
-            _clipboardManager = (Android.Content.ClipboardManager?)_context.GetSystemService(Context.ClipboardService);
-        }
+        //if (_clipboardManager is null)
+        //{
+        //    _clipboardManager = (Android.Content.ClipboardManager?)_context.GetSystemService(Context.ClipboardService);
+        //}
 
-        if (_clipboardManager is not null)
-        {
-            _clipboardListener = new ClipboardListener(this);
-            _clipboardManager.AddPrimaryClipChangedListener(_clipboardListener);
-        }
+        //if (_clipboardManager is not null)
+        //{
+        //    _clipboardListener = new ClipboardListener(this);
+        //    _clipboardManager.AddPrimaryClipChangedListener(_clipboardListener);
+        //}
     }
 
     public void StopListening()
     {
-        if (Interlocked.CompareExchange(ref _isDisposed, 0, 0) == 1)
-        {
-            throw new ObjectDisposedException(nameof(ClipboardService));
-        }
+        //if (Interlocked.CompareExchange(ref _isDisposed, 0, 0) == 1)
+        //{
+        //    throw new ObjectDisposedException(nameof(ClipboardService));
+        //}
 
-        if (_clipboardManager is not null && _clipboardListener is not null)
-        {
-            // Unsubscribe from the listener
-            _clipboardManager.RemovePrimaryClipChangedListener(_clipboardListener);
-            _clipboardListener.Dispose();
-            _clipboardListener = null;
+        //if (_clipboardManager is not null && _clipboardListener is not null)
+        //{
+        //    // Unsubscribe from the listener
+        //    _clipboardManager.RemovePrimaryClipChangedListener(_clipboardListener);
+        //    _clipboardListener.Dispose();
+        //    _clipboardListener = null;
 
-            // Dispose of the clipboard manager
-            _clipboardManager.Dispose();
-            _clipboardManager = null;
-        }
+        //    // Dispose of the clipboard manager
+        //    _clipboardManager.Dispose();
+        //    _clipboardManager = null;
+        //}
     }
 
     public async Task<string?> GetClipboardContentAsync()
@@ -76,22 +77,150 @@ public partial class ClipboardService
 
     public async Task ClearClipboardAsync()
     {
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             // Android's implementation varies by manufacturer, but we'll just clear the current clipboard
             if (_context.GetSystemService(Context.ClipboardService) is Android.Content.ClipboardManager clipboardManager)
             {
-                if (Build.VERSION.SdkInt <= BuildVersionCodes.OMr1) // Check if API level is 27 or lower
+                try
                 {
-                    clipboardManager.PrimaryClip = ClipData.NewPlainText("", "");
+                    //List<string?> clipItems = await QuerySamsungClipboardContentsAsync();
+                    //foreach (string? item in clipItems)
+                    //{
+                    //    _logger.LogInformation("Clipboard item: {Item}", item);
+                    //    System.Diagnostics.Debug.WriteLine($"Clipboard item: {item}");
+                    //}
+
+                    // Try to access Samsung's clipboard content provider
+                    // URI may vary based on Samsung's implementation
+                    Android.Net.Uri? clipboardUri = Android.Net.Uri.Parse("content://com.samsung.android.content.clipboard/clip");
+                    if (clipboardUri is not null && _context.ContentResolver != null)
+                    {
+                        using ContentProviderClient? client = _context.ContentResolver.AcquireContentProviderClient(clipboardUri);
+                        int? rowsDeleted = client?.Delete(clipboardUri, null, null);
+                        _logger.LogInformation("Clipboard cleared using content provider. Rows deleted: {RowsDeleted}", rowsDeleted);
+
+                        // This may not be necessary, but it's a good practice to clear the clipboard after deleting the content
+                        clipboardManager.PrimaryClip = ClipData.NewPlainText("empty", "");
+                        clipboardManager.ClearPrimaryClip(); // Clear the primary clipboard contents
+
+                        bool? refreshed = client?.Refresh(clipboardUri, null, null);
+                        if (refreshed == true)
+                        {
+                            // Successfully refreshed the clipboard
+                            _logger.LogInformation("Clipboard cleared using content provider.");
+                        }
+                        else
+                        {
+                            // Failed to refresh the clipboard, but we can still clear it
+                            _logger.LogWarning("Failed to refresh clipboard after clearing using content provider.");
+                        }
+
+                        return;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    clipboardManager.ClearPrimaryClip(); // Clear the primary clipboard contents
+                    _logger.LogError(ex, "Content provider-based clipboard clear failed");
                 }
+
+                try
+                {
+                    if (Build.Manufacturer?.Contains("samsung", StringComparison.InvariantCultureIgnoreCase) == true)
+                    {
+                        // Samsung workaround - use repeated different empty text
+                        // This helps displace items in Samsung's clipboard history
+                        for (int i = 0; i < 50; i++)
+                        {
+                            string placeholder = new string(' ', i + 1); // Different length spaces
+                            clipboardManager.PrimaryClip = ClipData.NewPlainText($"empty_{i}", placeholder);
+
+                            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+                            {
+                                clipboardManager.ClearPrimaryClip();
+                            }
+
+                            // Small delay between operations
+                            await Task.Delay(50);
+                        }
+
+                        // Final clear with empty string
+                        clipboardManager.PrimaryClip = ClipData.NewPlainText("empty", "");
+
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+                        {
+                            clipboardManager.ClearPrimaryClip();
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "special loop-based clipboard clear failed");
+                }
+                //for (int i = 0; i < 10; i++)
+                //{
+                //    clipboardManager.Text = string.Empty;
+                //    clipboardManager.PrimaryClip = ClipData.NewPlainText("", "");
+                //    clipboardManager.ClearPrimaryClip(); // Clear the primary clipboard contents
+                //}
+
+                //if (Build.VERSION.SdkInt <= BuildVersionCodes.OMr1) // Check if API level is 27 or lower
+                //{
+                //    clipboardManager.PrimaryClip = ClipData.NewPlainText("", "");
+                //}
+                //else
+                //{
+                //    clipboardManager.ClearPrimaryClip(); // Clear the primary clipboard contents
+                //}
 
                 UpdateLastCleared();
             }
+        });
+    }
+
+    public async Task<List<string?>> QuerySamsungClipboardContentsAsync()
+    {
+        return await Task.Run(() =>
+        {
+            List<string?> clipboardItems = new List<string?>();
+
+            try
+            {
+                Android.Net.Uri? clipboardUri = Android.Net.Uri.Parse("content://com.samsung.android.content.clipboard/clipdata");
+                if (_context.ContentResolver is null || clipboardUri is null)
+                {
+                    _logger.LogError("Content resolver or clipboard URI is null");
+                    return clipboardItems;
+                }
+
+                using ContentProviderClient? client = _context.ContentResolver.AcquireContentProviderClient(clipboardUri);
+                if (client == null) return clipboardItems;
+
+                using Android.Database.ICursor? cursor = client.Query(
+                    clipboardUri,
+                    ["text", "timestamp"],
+                    null,
+                    null,
+                    "timestamp DESC");
+                if (cursor == null) return clipboardItems;
+
+                while (cursor.MoveToNext())
+                {
+                    int textColumnIndex = cursor.GetColumnIndex("text");
+                    if (textColumnIndex >= 0)
+                    {
+                        string? text = cursor.GetString(textColumnIndex);
+                        clipboardItems.Add(text);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error querying Samsung clipboard contents");
+            }
+
+            return clipboardItems;
         });
     }
 
@@ -100,7 +229,7 @@ public partial class ClipboardService
         return await Task.Run(() =>
         {
             if (_context.GetSystemService(Context.ClipboardService) is
-                Android.Content.ClipboardManager { HasPrimaryClip: true } clipboardManager)
+                    Android.Content.ClipboardManager clipboardManager && clipboardManager.HasPrimaryClip)
             {
                 ClipData? clipData = clipboardManager.PrimaryClip;
                 if (clipData?.ItemCount > 0)
