@@ -62,6 +62,7 @@ public partial class MainPageViewModel : ObservableObject
             }
 
             LastClearedTime = _settingsService.LastClearTime;
+            LastClearedTime = _clipboardService.LastCleared;
         }
         catch (Exception ex)
         {
