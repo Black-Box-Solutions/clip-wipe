@@ -4,68 +4,71 @@
            xmlns:pageModels="clr-namespace:ClipWipe.App.PageModels"  
            x:Class="ClipWipe.App.Pages.MainPage"  
            x:DataType="pageModels:MainPageViewModel"  
-           Title="ClipWipe">  
+           Title="ClipWipe">
 
-  <ScrollView>  
-      <VerticalStackLayout Padding="25" Spacing="20">  
-          <Label Text="Clipboard Manager" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />  
+    <ScrollView>
+        <VerticalStackLayout Padding="25" Spacing="20">
+            <Label Text="Clipboard Manager" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
 
-          <Border Stroke="LightGray" Padding="15" StrokeThickness="1" BackgroundColor="White">  
-              <VerticalStackLayout Spacing="10">  
-                  <Label Text="Current Clipboard Content" FontSize="16" FontAttributes="Bold" />  
+            <Border Stroke="LightGray" Padding="15" StrokeThickness="1" BackgroundColor="White">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Current Clipboard Content" FontSize="16" FontAttributes="Bold" />
 
-                  <Border StrokeShape="RoundRectangle 10,10,10,10"  
+                    <Border StrokeShape="RoundRectangle 10,10,10,10"  
                           Stroke="LightGray"  
                           StrokeThickness="1"  
-                          Padding="10">  
-                      <ScrollView MaximumHeightRequest="150">  
-                          <Label Text="{Binding ClipboardContent}"  
+                          Padding="10">
+                        <ScrollView MaximumHeightRequest="150">
+                            <Label Text="{Binding ClipboardContent}"  
                                  IsVisible="{Binding HasClipboardContent}"  
-                                 LineBreakMode="WordWrap" />  
-                      </ScrollView>  
-                  </Border>  
+                                 LineBreakMode="WordWrap" />
+                        </ScrollView>
+                    </Border>
 
-                  <Label Text="Clipboard is empty"  
+                    <Label Text="Clipboard is empty"  
                          IsVisible="{Binding HasClipboardContent, Converter={StaticResource InvertedBoolConverter}}"  
                          HorizontalOptions="Center"  
-                         TextColor="Gray" />  
+                         TextColor="Gray" />
 
-                  <Button Text="Refresh Clipboard"  
+                    <Button Text="Refresh Clipboard"  
                           Command="{Binding RefreshClipboardCommand}"  
                           BackgroundColor="#3498db"  
                           TextColor="White"  
-                          Margin="0,10,0,0" />  
-              </VerticalStackLayout>  
-          </Border>  
+                          Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Border>
 
-          <Border Stroke="LightGray" Padding="15" StrokeThickness="1" BackgroundColor="White">  
-              <VerticalStackLayout Spacing="10">  
-                  <Label Text="Clipboard Actions" FontSize="16" FontAttributes="Bold" />  
+            <Border>
+                <VerticalStackLayout IsVisible="{Binding LastClearedTime, Converter={StaticResource NullToBoolConverter}}">
+                    <Label Text="Last Cleared:" FontAttributes="Bold" TextColor="White" />
+                    <Label Text="{Binding LastClearedTime, StringFormat='{0:MM/dd/yyyy hh:mm tt}'}" TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
+                
+            <Border Stroke="LightGray" Padding="15" StrokeThickness="1" BackgroundColor="White">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Clipboard Actions" FontSize="16" FontAttributes="Bold" />
 
-                  <Button Text="Clear Clipboard"  
+                    <Button Text="Clear Clipboard"  
                           Command="{Binding ClearClipboardCommand}"  
                           BackgroundColor="#e74c3c"  
-                          TextColor="White" />  
+                          TextColor="White" />
 
-                  <VerticalStackLayout IsVisible="{Binding LastClearedTime, Converter={StaticResource NullToBoolConverter}}">  
-                      <Label Text="Last Cleared:" FontAttributes="Bold" />  
-                      <Label Text="{Binding LastClearedTime, StringFormat='{0:MM/dd/yyyy hh:mm tt}'}" />  
-                  </VerticalStackLayout>  
 
-                  <Label Text="{Binding StatusMessage}"  
+                    <Label Text="{Binding StatusMessage}"  
                          TextColor="DimGray"  
                          HorizontalOptions="Center"  
-                         Margin="0,10,0,0" />  
-              </VerticalStackLayout>  
-          </Border>  
+                         Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Border>
 
-          <Label Text="Press 'Refresh Clipboard' to check current clipboard content. Press 'Clear Clipboard' to clear clipboard content immediately."  
+            <Label Text="Press 'Refresh Clipboard' to check current clipboard content. Press 'Clear Clipboard' to clear clipboard content immediately."  
                  TextColor="Gray"  
                  HorizontalOptions="Center"  
                  HorizontalTextAlignment="Center"  
-                 Margin="0,10,0,0" />  
+                 Margin="0,10,0,0" />
 
-      </VerticalStackLayout>  
-  </ScrollView>  
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
