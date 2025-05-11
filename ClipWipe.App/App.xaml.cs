@@ -53,7 +53,7 @@ public partial class App : Application
         base.OnSleep();
 
         // App going to background
-        _clipboardService.StopListening();
+        //        _clipboardService.StopListening();
         _clipboardTimerService.SaveSettingsAsync().SafeFireAndForget(ex =>
         {
             _logger.LogError(ex, "Error saving settings during sleep");
@@ -63,7 +63,7 @@ public partial class App : Application
     protected override void OnResume()
     {
         base.OnResume();
-        _clipboardService.StartListening();
+        //        _clipboardService.StartListening();
         _clipboardTimerService.InitializeTimerFromSettingsAsync().SafeFireAndForget(ex =>
         {
             _logger.LogError(ex, "Error re-initializing timer on resume");
