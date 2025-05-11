@@ -44,6 +44,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<AndroidResource Remove="Claude\**" />
+		<Compile Remove="Claude\**" />
+		<EmbeddedResource Remove="Claude\**" />
+		<MauiCss Remove="Claude\**" />
+		<MauiXaml Remove="Claude\**" />
+		<None Remove="Claude\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
